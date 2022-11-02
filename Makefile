@@ -6,7 +6,9 @@ END			= \e[0m
 TOTEM 		= 🦁
 
 FILES = cub3d \
-		check
+		check \
+		init \
+		game \
 
 SRCS = $(FILES:%=srcs/%.c)
 NAME		= cub3d
@@ -16,9 +18,10 @@ OBJS		= $(SRCS:.c=.o)
 OBJECTS_PREFIXED = $(addprefix $(OBJS_DIR), $(OBJS))
 CC			= gcc
 CC_FLAGS	= -Wall -Werror -Wextra -g3
-#LIBS		= # Add your libs here
+LIBS		= gnl/gnl.a -lmlx -framework OpenGL -framework AppKit
 
 $(OBJS_DIR)%.o : %.c $(PROJECT_H)
+	@make -C gnl
 	@mkdir -p $(OBJS_DIR)
 	@mkdir -p $(OBJS_DIR)srcs
 	@$(CC) $(CC_FLAGS) -c $< -o $@
@@ -31,10 +34,12 @@ $(NAME): $(OBJECTS_PREFIXED)
 all: $(NAME)
 
 clean:
+	@make clean -C gnl
 	@rm -rf $(OBJS_DIR)
 	@printf "\033[2K\r${GRN}${TOTEM} [CLEAN]${RST} done$(END)\n"
 
 fclean: clean
+	@make fclean -C gnl
 	@rm -f $(NAME)
 	@rm -rf $(OBJS_DIR)
 	@printf "\033[2K\r${GRN}${TOTEM} [FCLEAN]${RST} done$(END)\n"
